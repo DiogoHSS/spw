@@ -1,17 +1,10 @@
 #!/usr/bin/env sh
 
-# Colors
-
 # Default values
 pack_dir="$HOME/.config/nvim/pack/spw"
 init_file="$HOME/.config/nvim/init.lua"
 lua_dir="$HOME/.config/nvim/lua/spw"
 init_lua_file="$lua_dir/init.lua"
-
-# Function to display usage information
-display_usage() {
-  echo -e "Usage: $0" 
-}
 
 if [ ! -d "$pack_dir" ]; then
   mkdir -p "$pack_dir"
