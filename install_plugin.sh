@@ -3,6 +3,7 @@
 # Colors
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
+GRAY='\033[0;90m'
 RESET_COLOR='\033[0m'
 
 # Default value
@@ -12,17 +13,17 @@ plugin_dir="$HOME/.config/nvim/pack/spw/"
 
 # Help function
 display_usage() {
-  echo "Usage: $0 ${YELLOW}-t${RESET_COLOR}|${YELLOW}--type${RESET_COLOR} <type> ${YELLOW}-r${RESET_COLOR}|${YELLOW}--repository${RESET_COLOR} <repository> ${YELLOW}-u${RESET_COLOR}|${YELLOW}--username${RESET_COLOR} <username> ${YELLOW}-p${RESET_COLOR}|${YELLOW}--plugin${RESET_COLOR} <plugin>"
-  echo "   or: $0 <type> <repository> <username> <plugin>\n"
-  echo "       $0 ${YELLOW}-h${RESET_COLOR}|${YELLOW}--help${RESET_COLOR}"
+  echo "Usage: $YELLOW$0$RESET_COLOR $GRAY-t$RESET_COLOR|$GRAY--type$RESET_COLOR <type> $GRAY-r$RESET_COLOR|$GRAY--repository$RESET_COLOR <repository> $GREEN-u$RESET_COLOR|$GREEN--username$RESET_COLOR <username> $GREEN-p$RESET_COLOR|$GREEN--plugin$RESET_COLOR <plugin>"
+  echo "   or: $YELLOW$0$RESET_COLOR $GRAY<type>$RESET_COLOR $GRAY<repository>$RESET_COLOR $GREEN<username>$RESET_COLOR $GREEN<plugin>$RESET_COLOR\n"
+  echo "       $YELLOW$0$RESET_COLOR -h|--help"
   echo "       Display this message\n"
   echo "Description:"
-  echo "  Downloads from repository to ${plugin_dir}<plugin>\n"
+  echo "  Downloads from repository to $plugin_dir<plugin>\n"
   echo "Options:"
-  echo "  ${GREEN}-t${RESET_COLOR}, ${GREEN}--type${RESET_COLOR}        Specify the plugin type (e.g. python, git) (default: ${plugin_type})"
-  echo "  ${GREEN}-r${RESET_COLOR}, ${GREEN}--repository${RESET_COLOR}  Specify the source repository (default: ${repository})"
-  echo "  ${GREEN}-u${RESET_COLOR}, ${GREEN}--username${RESET_COLOR}    Specify the plugin's repository owner"
-  echo "  ${GREEN}-p${RESET_COLOR}, ${GREEN}--plugin${RESET_COLOR}      Specify the plugin's name"
+  echo "  $GRAY-t$RESET_COLOR, $GRAY--type$RESET_COLOR        Specify the plugin type (e.g. python, git) (default: $plugin_type)"
+  echo "  $GRAY-r$RESET_COLOR, $GRAY--repository$RESET_COLOR  Specify the source repository (default: $repository)"
+  echo "  $GREEN-u$RESET_COLOR, $GREEN--username$RESET_COLOR    Specify the plugin's repository owner"
+  echo "  $GREEN-p$RESET_COLOR, $GREEN--plugin$RESET_COLOR      Specify the plugin's name"
 }
 
 # Parse command-line arguments
@@ -64,7 +65,7 @@ if [ -z "$username" ] || [ -z "$plugin" ]; then
 fi
 
 # Clone the plugin directory
-git clone "https://github.com/$username/$plugin.git" "${plugin_dir}${plugin_type}${plugin}"
+git clone "https://github.com/$username/$plugin.git" "$plugin_dir$plugin_type/$plugin"
 
-echo "Plugin ${plugin} saved to ${plugin_dir}${plugin_type}${plugin}sucessfully!"
+echo "Plugin $plugin saved to $plugin_dir$plugin_type$plugin sucessfully!"
 
