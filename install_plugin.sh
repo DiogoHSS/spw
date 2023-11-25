@@ -7,24 +7,36 @@ GRAY='\033[0;90m'
 RESET_COLOR='\033[0m'
 
 # Default value
-plugin_type="start"
-repository="github"
-plugin_dir="$HOME/.config/nvim/pack/spw/"
+default_plugin_type="start"
+default_repository="github"
+# TODO: Add a way to change default dir
+default_dir="$HOME/.config/nvim/pack/spw"
 
 # Help function
 display_usage() {
-  echo "Usage: $YELLOW$0$RESET_COLOR $GRAY-t$RESET_COLOR|$GRAY--type$RESET_COLOR <type> $GRAY-r$RESET_COLOR|$GRAY--repository$RESET_COLOR <repository> $GREEN-u$RESET_COLOR|$GREEN--username$RESET_COLOR <username> $GREEN-p$RESET_COLOR|$GREEN--plugin$RESET_COLOR <plugin>"
-  echo "   or: $YELLOW$0$RESET_COLOR $GRAY<type>$RESET_COLOR $GRAY<repository>$RESET_COLOR $GREEN<username>$RESET_COLOR $GREEN<plugin>$RESET_COLOR\n"
-  echo "       $YELLOW$0$RESET_COLOR -h|--help"
-  echo "       Display this message\n"
+  echo "Usage: $YELLOW$0$RESET_COLOR $GRAY-t$RESET_COLOR|$GRAY--type$RESET_COLOR <plugin_type> $GRAY-r$RESET_COLOR|$GRAY--repository$RESET_COLOR <repository> $GREEN-u$RESET_COLOR|$GREEN--username$RESET_COLOR <username> $GREEN-n$RESET_COLOR|$GREEN--name$RESET_COLOR <plugin_name>"
+  echo "   or: $YELLOW$0$RESET_COLOR $GRAY<plugin_type>$RESET_COLOR $GRAY<repository>$RESET_COLOR $GREEN<username>$RESET_COLOR $GREEN<plugin_name>$RESET_COLOR\n"
   echo "Description:"
-  echo "  Downloads from repository to $plugin_dir<plugin>\n"
+  echo "  Downloads from <repository> to $default_dir/<plugin_name>\n"
   echo "Options:"
-  echo "  $GRAY-t$RESET_COLOR, $GRAY--type$RESET_COLOR        Specify the plugin type (e.g. python, git) (default: $plugin_type)"
-  echo "  $GRAY-r$RESET_COLOR, $GRAY--repository$RESET_COLOR  Specify the source repository (default: $repository)"
-  echo "  $GREEN-u$RESET_COLOR, $GREEN--username$RESET_COLOR    Specify the plugin's repository owner"
-  echo "  $GREEN-p$RESET_COLOR, $GREEN--plugin$RESET_COLOR      Specify the plugin's name"
+  echo "  $GRAY-t$RESET_COLOR, $GRAY--type$RESET_COLOR        Specify the plugin type (e.g. opt, java, python, etc...) (default: $default_plugin_type)"
+  echo "  $GRAY-r$RESET_COLOR, $GRAY--repository$RESET_COLOR  Specify the source repository (default: $default_repository)"
+  echo "  $GREEN-u$RESET_COLOR, $GREEN--username$RESET_COLOR    Specify the plugin's repository owner, required"
+  echo "  $GREEN-n$RESET_COLOR, $GREEN--name$RESET_COLOR      Specify the plugin's name, required"
+  echo "  $GRAY-h$RESET_COLOR, $GRAY--help$RESET_COLOR        Display this message"
 }
+
+if [ "$#" -lt 2 ]; then
+  echo "Error: At least two arguments are required, <username> and <plugin_name>.\n"
+  display_usage
+  exit 1
+fi
+
+if [ "$#" -gt 8 ]; then
+  echo "Error: Too many arguments\n\n"
+  display_usage
+  exit 1
+fi
 
 # Parse command-line arguments
 while [ "$#" -gt 0 ]; do
@@ -45,27 +57,49 @@ while [ "$#" -gt 0 ]; do
       username="$2"
       shift 2
       ;;
-    -p|--plugin)
+    -n|--name)
       plugin="$2"
       shift 2
       ;;
     *)
-      echo "Unkown option: $1"
-      display_usage
-      exit 1
+      # TODO: Allow more flexibility to giving arguments
+      if [ "$#" -eq 4 ] && [ -z "$plugin_type" ]; then
+        plugin_type="$1"
+      elif [ "$#" -eq 3 ] && [ -z "$repository" ]; then
+        repository="$1"
+      elif [ "$#" -eq 2 ] && [ -z "$username" ]; then
+        username="$1"
+      elif [ "$#" -eq 1 ] && [ -z "$name" ]; then
+        name="$1"
+      else
+        echo "Error: Too many arguments."
+        display_usage
+        exit 1
+        # TODO: display taken variables and ask for confirmation to continue
+      fi
+      shift
       ;;
   esac
 done
 
 # Check if required arguments are provided
-if [ -z "$username" ] || [ -z "$plugin" ]; then
-  echo "The arguments `username` and `plugin` are required"
+if [ -z "$username" ] || [ -z "$name" ]; then
+  echo "The arguments <username> and <plugin> are required"
   display_usage
   exit 1
 fi
 
-# Clone the plugin directory
-git clone "https://github.com/$username/$plugin.git" "$plugin_dir$plugin_type/$plugin"
+if [ -z "$plugin_type" ]; then
+  plugin_type="$default_plugin_type"
+fi
 
-echo "Plugin $plugin saved to $plugin_dir$plugin_type$plugin sucessfully!"
+if [ -z "$repository" ]; then
+  repository="$default_repository"
+fi
+
+# Clone the plugin directory
+# TODO: Add a way to change plugin name on install
+git clone "https://$repository.com/$username/$name.git" "$default_dir$plugin_type/$name"
+
+echo "Plugin $name saved to $default_dir$plugin_type$name sucessfully!"
 
